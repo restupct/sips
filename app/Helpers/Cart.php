@@ -29,9 +29,21 @@ class Cart
     ];
   }
 
-  public function add(Barang $barang)
+  // public function add(Barang $barang)
+  // {
+  //   $cart = $this->get();
+  //   array_push($cart['barangs'], $barang);
+  //   $this->set($cart);
+  //   dd($cart);
+  // }
+  public function add(Barang $barang, $qty = 1)
   {
     $cart = $this->get();
+
+    // Menambahkan properti qty ke $barang
+    $barang->qty = $qty;
+    $barang->harga_total = $barang->harga * $qty;
+
     array_push($cart['barangs'], $barang);
     $this->set($cart);
   }

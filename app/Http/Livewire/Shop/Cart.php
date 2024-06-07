@@ -18,15 +18,27 @@ class Cart extends Component
     public $total;
     public $totalHargaPerBarang = 0;
 
-    public function updatedQty()
+    public function updateQty($barang_id, $newQty)
     {
-        $this->totalHargaPerBarang = $this->qty * $this->harga;
+        // Cari barang di dalam keranjang berdasarkan id
+        foreach ($this->cart['barangs'] as $index => $barang) {
+            if ($barang['id'] == $barang_id) {
+                // Perbarui kuantitas barang
+                $this->cart['barangs'][$index]['qty'] = $newQty;
+
+                // Perbarui total harga per barang
+                $this->cart['barangs'][$index]['harga_total'] = $barang['harga'] * $newQty;
+            }
+        }
+
+        FacadesCart::set($this->cart);
+        $this->total = collect($this->cart['barangs'])->sum('harga_total');
     }
     public function mount()
     {
         $this->cart = FacadesCart::get();
         // sum the harga price
-        $this->total = collect($this->cart['barangs'])->sum('harga');
+        $this->total = collect($this->cart['barangs'])->sum('harga_total');
     }
     public function render()
     {
@@ -73,7 +85,7 @@ class Cart extends Component
             PesananBarang::create([
                 'pesanan_id' => $pesanan->id,
                 'barang_id' => $item['barang_id'],
-                'qty' => 1,
+                'qty' => $item['qty'],
                 'sub_total' => $item['sub_total'],
             ]);
             Barang::where('id', $item['barang_id'])->decrement('stok', 1);

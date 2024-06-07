@@ -1,4 +1,5 @@
-@dump(session()->all())<div class="container mt-4">
+{{--@dump(session()->all())--}}
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -14,13 +15,16 @@
                         <tbody>
                             @foreach ($cart['barangs'] as $key => $item)
                                 <tr wire:key="{{ $key }}">
-                                    <td>{{ $item->nama_barang }}</td>
-                                    <td> {{ $item->harga }}</td>
+                                    <td>{{ $item['nama_barang'] }}</td>
+                                    <td> {{ $item['harga'] }}</td>
+                                    <td>
+                                        <input type="number" class="form-control" name="qty" id="" value="{{$item['qty']}}"  wire:change="updateQty({{ $item['id'] }}, $event.target.value)">
+                                    </td>
                                     {{-- <td><input type="number" wire:model="qty" name="qty" id="qty"
                                             class="form-control" style="width: 100px"></td> --}}
                                     {{-- <td><input type="text" wire:model="totalHargaPerBarang" class="form-control"> --}}
                                     </td>
-                                    <td><button wire:click="removeFromCart({{ $item->id }})"
+                                    <td><button wire:click="removeFromCart({{ $item['id'] }})"
                                             class="btn btn-sm btn-danger">Hapus</button></td>
                                 </tr>
                             @endforeach
