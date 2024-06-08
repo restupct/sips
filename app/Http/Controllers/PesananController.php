@@ -7,10 +7,18 @@ use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\PesananBarang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class PesananController extends Controller
 {
+    private $token;
+
+    public function __construct()
+    {
+        $this->token = config('services.wablas.token');
+    }
+
     public function check(Pesanan $pesanan)
     {
         $pesanan = Pesanan::find($pesanan->id);
@@ -143,6 +151,15 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::find($pesanan->id);
         $pesanan->update(['status' => 'Diproses']);
+
+        // kirim notifikasi ke pelanggan via wa
+        $no_telepon = $pesanan->pelanggan->no_telepon;
+        $message = "Hai, " . $pesanan->pelanggan->user->name . ". Pesanan anda dengan no transaksi " . $pesanan->no_transaksi . " sedang *diproses*. Terima kasih.";
+        Http::get("https://jogja.wablas.com/api/send-message", [
+            'phone' => $no_telepon,
+            'message' => $message,
+            'token' => $this->token,
+        ]);
         return redirect()->back();
     }
 
@@ -150,6 +167,14 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::find($pesanan->id);
         $pesanan->update(['status' => 'Dikirim']);
+        // kirim notifikasi ke pelanggan via wa
+        $no_telepon = $pesanan->pelanggan->no_telepon;
+        $message = "Hai, " . $pesanan->pelanggan->user->name . ". Pesanan anda dengan no transaksi " . $pesanan->no_transaksi . " sedang *dikirim*. Terima kasih.";
+        Http::get("https://jogja.wablas.com/api/send-message", [
+            'phone' => $no_telepon,
+            'message' => $message,
+            'token' => $this->token,
+        ]);
         return redirect()->back();
     }
 
@@ -157,6 +182,14 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::find($pesanan->id);
         $pesanan->update(['status' => 'Selesai']);
+        // kirim notifikasi ke pelanggan via wa
+        $no_telepon = $pesanan->pelanggan->no_telepon;
+        $message = "Hai, " . $pesanan->pelanggan->user->name . ". Pesanan anda dengan no transaksi " . $pesanan->no_transaksi . " sudah *selesai*. Terima kasih.";
+        Http::get("https://jogja.wablas.com/api/send-message", [
+            'phone' => $no_telepon,
+            'message' => $message,
+            'token' => $this->token,
+        ]);
         return redirect()->back();
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Barang;
 use App\Models\Pesanan;
 use App\Models\PesananBarang;
 use Barryvdh\Debugbar\Facade;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 class Cart extends Component
@@ -55,6 +56,7 @@ class Cart extends Component
 
     public function pesan()
     {
+
         $this->cart = FacadesCart::get();
         if ($this->cart['barangs'] == null) {
             return redirect()->route('home')->with('error', 'Keranjangmu masih kosong');
@@ -92,6 +94,19 @@ class Cart extends Component
         }
         // clear cart
         FacadesCart::clear();
+
+        $linkDetailPesanan = route('pesanan.show', $pesanan->id);
+
+        $no_telepon = auth()->user()->pelanggan->no_telepon;
+        $message = "Hai, admin.
+Ada Pesanan dari " . auth()->user()->name . " dengan total harga *Rp. " . $this->total . "*. Silahkan klik link berikut : ".$linkDetailPesanan." untuk melihat detail pesanan. Terima kasih.";
+        $token = config('services.wablas.token');
+        $response = Http::get("https://jogja.wablas.com/api/send-message", [
+            'phone' => "082230404281",
+            'message' => $message,
+            'token' => $token,
+        ]);
+
         return redirect()->route('home')->with('success', 'Pesananmu berhasil dibuat, tunggu barang dikirim oleh penjual ya!');
     }
 }
