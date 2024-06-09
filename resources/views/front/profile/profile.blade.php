@@ -23,7 +23,7 @@
                                 {{ session('success') }}
                             </div>
                         @endif
-                        <form action="{{ route('update.profile') }}" method="post">
+                        <form action="{{ route('update.profile') }}" method="post" enctype="multipart/form-data">
                             <div class="row">
                                 @csrf
                                 {{-- Picture --}}
@@ -37,7 +37,7 @@
                                         @else
                                             <img id="uploadfile-1-preview"
                                                 class="avatar-img img-preview rounded-circle shadow"
-                                                src="{{ asset('storage/profile-pelanggan/' . $profile->pelanggan->foto) }}"
+                                                src="{{ asset('storage/' . $profile->pelanggan->foto) }}"
                                                 alt=""style="width: 100px">
                                         @endif
                                     </span>

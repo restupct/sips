@@ -99,7 +99,7 @@ class Cart extends Component
 
         $no_telepon = auth()->user()->pelanggan->no_telepon;
         $message = "Hai, admin.
-Ada Pesanan dari " . auth()->user()->name . " dengan total harga *Rp. " . $this->total . "*. Silahkan klik link berikut : ".$linkDetailPesanan." untuk melihat detail pesanan. Terima kasih.";
+Ada Pesanan dari " . auth()->user()->name . " dengan total harga *Rp. " . number_format($this->total,0,',','.') . "*. Silahkan klik link berikut : ".$linkDetailPesanan." untuk melihat detail pesanan. Terima kasih.";
         $token = config('services.wablas.token');
         $response = Http::get("https://jogja.wablas.com/api/send-message", [
             'phone' => "082230404281",
